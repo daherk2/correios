@@ -1,27 +1,23 @@
-#!/usr/bin/env python3
-
-import urllib.request
+import urllib2 as l2
 import re
 import sys
 
-def usage():
-    print('Modo de uso: {0} "ENCOMENDA[1]" "ENCOMENDA[2]" ... "ENCOMENDA[N]"'.format(sys.argv[0]))
-    sys.exit(1)
-
-def encomenda(lista):
-    for codigo in lista:
+def encomenda(listado):
+    var = []
+    var = str(listado).split(' ')
+    for lista in var:
         content = []
         address = 'http://websro.correios.com.br/sro_bin/txect01$.QueryList?P_ITEMCODE=&P_LINGUA=001&P_TESTE=&P_TIPO=001&P_COD_UNI='
-        with urllib.request.urlopen(address + codigo) as url:
-            for line in url.readlines():
-                content.append(line.decode('iso-8859-1'))
+        url = l2.urlopen(str(address) + str(lista))
+        for line in url.readlines():
+            content.append(line.decode('iso-8859-1'))
                 
         content = [ elem.rstrip() for elem in content if 'rowspan' in elem ]
-        
+       
         if len(content) == 0:
-            print('Encomenda {0} não foi encontrada'.format(codigo))
+            print('Encomenda {0} n�o foi encontrada'.format(lista))
         else:
-            print('\n\nHistórico do objeto: {0}\n'.format(codigo))
+            print('\n\nHist�rico do objeto: {0}\n'.format(lista))
             for data in content:
                 [(dia, local, sit)] = re.findall('<tr><td rowspan.+>(.*)</td><td>(.*)</td><td><FONT.*>(.*)</font>.*', data)
                 dia = " ".join(dia.split())
@@ -30,20 +26,12 @@ def encomenda(lista):
                 
                 print('Data: {0}'.format(dia))
                 print('Local: {0}'.format(local))
-                print('Situação: {0}'.format(sit))
-                print()
-
+                print('Situa��o: {0}'.format(sit))
+                print(' ')
 def main():
-    if len(sys.argv) == 1 or sys.argv[1] in {'-h', '--help'}:
-        usage()
-    
-    args = [ elem.upper() for elem in sys.argv[1:] if len(elem) == 13 ]
-
-    if len(args) == 0:
-        print('Código de encomenda inválido\nO código deve ter 13 dígitos')
-        usage()
-    else:
-        encomenda(args)
-
+    var = raw_input("Insira os codigos com espa�o. Exemplo : XXXXXXXXXXXXX XXXXXXXXXXXXX : ")
+    encomenda(var)
+  
 if __name__ == '__main__':
     main()
+
