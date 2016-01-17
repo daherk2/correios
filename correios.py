@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import urllib2 as l2
 import re
 import sys
@@ -10,14 +11,15 @@ def encomenda(listado):
         address = 'http://websro.correios.com.br/sro_bin/txect01$.QueryList?P_ITEMCODE=&P_LINGUA=001&P_TESTE=&P_TIPO=001&P_COD_UNI='
         url = l2.urlopen(str(address) + str(lista))
         for line in url.readlines():
-            content.append(line.decode('iso-8859-1'))
+            content.append(line.decode('iso-8859-1').encode('utf-8'))
+            
                 
         content = [ elem.rstrip() for elem in content if 'rowspan' in elem ]
        
         if len(content) == 0:
-            print('Encomenda {0} n„o foi encontrada'.format(lista))
+            print('Encomenda {0} n√£o foi encontrada'.format(lista))
         else:
-            print('\n\nHistÛrico do objeto: {0}\n'.format(lista))
+            print('\n\nHist√≥rico do objeto: {0}\n'.format(lista))
             for data in content:
                 [(dia, local, sit)] = re.findall('<tr><td rowspan.+>(.*)</td><td>(.*)</td><td><FONT.*>(.*)</font>.*', data)
                 dia = " ".join(dia.split())
@@ -26,10 +28,10 @@ def encomenda(listado):
                 
                 print('Data: {0}'.format(dia))
                 print('Local: {0}'.format(local))
-                print('SituaÁ„o: {0}'.format(sit))
+                print('Situa√ß√£o: {0}'.format(sit))
                 print(' ')
 def main():
-    var = raw_input("Insira os codigos com espaÁo. Exemplo : XXXXXXXXXXXXX XXXXXXXXXXXXX : ")
+    var = raw_input("Insira os codigos com espa√ßo. Exemplo : XXXXXXXXXXXXX XXXXXXXXXXXXX : ")
     encomenda(var)
   
 if __name__ == '__main__':
